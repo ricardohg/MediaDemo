@@ -8,6 +8,7 @@
 
 import UIKit
 import Photos
+import MobileCoreServices
 
 class ImageCell: UICollectionViewCell {
 
@@ -17,6 +18,8 @@ class ImageCell: UICollectionViewCell {
 class ViewController: UIViewController {
     
     fileprivate let picker = UIImagePickerController()
+    fileprivate let videoPicker = UIImagePickerController()
+    
     @IBOutlet weak var collectionView: UICollectionView!
     
     var imageUrls: [URL] = []
@@ -24,14 +27,19 @@ class ViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
+        self.picker.delegate = self
+        self.videoPicker.delegate = self
     }
 
 
     @IBAction func showPhotos(_ sender: UIButton) {
         
-        picker.delegate = self
         self.present(picker, animated: true, completion: nil)
+    }
+    
+    @IBAction func showVideos(_ sender: UIButton) {
+        self.videoPicker.mediaTypes = [kUTTypeMovie, kUTTypeAVIMovie, kUTTypeVideo, kUTTypeMPEG4] as [String]
+        self.present(self.videoPicker, animated: true, completion: nil)
     }
     
     fileprivate func fetchImages(for urls:[URL], images: @escaping ([UIImage]) -> () ) {
@@ -63,6 +71,8 @@ extension ViewController: UIImagePickerControllerDelegate, UINavigationControlle
         }
         
         self.picker.dismiss(animated: true, completion: nil)
+        self.videoPicker.dismiss(animated: true, completion: nil)
+        
         self.fetchImages(for: self.imageUrls) { images in
             self.images = images
             self.collectionView.reloadData()

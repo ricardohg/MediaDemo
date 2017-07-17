@@ -67,6 +67,14 @@
                                     <outlet property="dataSource" destination="BYZ-38-t0r" id="3md-vT-ld9"/>
                                 </connections>
                             </collectionView>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="rJU-Yt-8Dt">
+                                <rect key="frame" x="157" y="46" width="61" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="Videos"/>
+                                <connections>
+                                    <action selector="showVideos:" destination="BYZ-38-t0r" eventType="touchUpInside" id="6Pq-BM-MYb"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     </view>
