@@ -36,5 +36,7 @@
 	</array>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>use</string>
+    <key>NSAppleMusicUsageDescription</key>
+    <string>use music</string>
 </dict>
 </plist>

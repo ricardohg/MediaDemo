@@ -9,6 +9,7 @@
 import UIKit
 import Photos
 import MobileCoreServices
+import MediaPlayer
 
 class ImageCell: UICollectionViewCell {
 
@@ -19,6 +20,7 @@ class ViewController: UIViewController {
     
     fileprivate let picker = UIImagePickerController()
     fileprivate let videoPicker = UIImagePickerController()
+    fileprivate let mediaPicker = MPMediaPickerController()
     
     @IBOutlet weak var collectionView: UICollectionView!
     
@@ -29,12 +31,16 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         self.picker.delegate = self
         self.videoPicker.delegate = self
+        self.mediaPicker.delegate = self
     }
 
+    @IBAction func showSongs(_ sender: Any) {
+        self.present(self.mediaPicker, animated: true, completion: nil)
+    }
 
     @IBAction func showPhotos(_ sender: UIButton) {
         
-        self.present(picker, animated: true, completion: nil)
+        self.present(self.picker, animated: true, completion: nil)
     }
     
     @IBAction func showVideos(_ sender: UIButton) {
@@ -48,7 +54,7 @@ class ViewController: UIViewController {
         
         var tempImages: [UIImage] = []
         fetchResults.enumerateObjects(using: { photo, count, _ in
-            PHImageManager.default().requestImage(for: photo, targetSize: PHImageManagerMaximumSize , contentMode: .aspectFit, options: nil, resultHandler: { (image, info) in
+            PHImageManager.default().requestImage(for: photo, targetSize:  CGSize(width: 50.0, height: 50.0) , contentMode: .aspectFit, options: nil, resultHandler: { (image, info) in
                 if let im = image {
                     tempImages.append(im)
                     if count == fetchResults.count-1 {
@@ -70,12 +76,13 @@ extension ViewController: UIImagePickerControllerDelegate, UINavigationControlle
             self.imageUrls.append(url as URL)
         }
         
-        self.picker.dismiss(animated: true, completion: nil)
-        self.videoPicker.dismiss(animated: true, completion: nil)
+        picker.dismiss(animated: true, completion: nil)
         
-        self.fetchImages(for: self.imageUrls) { images in
+        self.fetchImages(for: self.imageUrls) {  [unowned self] images in
             self.images = images
+            
             self.collectionView.reloadData()
+            
             
         }
     }
@@ -85,7 +92,7 @@ extension ViewController: UIImagePickerControllerDelegate, UINavigationControlle
 extension ViewController: UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return self.imageUrls.count
+        return self.images.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -93,6 +100,24 @@ extension ViewController: UICollectionViewDataSource {
         cell.image.image = self.images[indexPath.row]
         return cell
     }
+}
+
+extension ViewController: MPMediaPickerControllerDelegate {
+    
+    func mediaPicker(_ mediaPicker: MPMediaPickerController, didPickMediaItems mediaItemCollection: MPMediaItemCollection) {
+        
+        if let item = mediaItemCollection.items.first {
+            
+            //can retrieve media item with id later
+            self.imageUrls.append(URL(string: String(item.persistentID))!)
+            if let image = item.artwork?.image(at: CGSize(width: 50.0, height: 50.0)) {
+            self.images.append(image)
+            self.collectionView.reloadData()
+            }
+        }
+        mediaPicker.dismiss(animated: true, completion: nil)
+    }
+    
 }
 
 
